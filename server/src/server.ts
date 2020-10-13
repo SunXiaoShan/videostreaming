@@ -13,22 +13,31 @@ export class Server {
  
  constructor() {
    this.initialize();
- 
-   this.handleRoutes();
-   this.handleSocketConnection();
  }
  
  private initialize(): void {
    this.app = express();
    this.httpServer = createServer(this.app);
    this.io = socketIO(this.httpServer);
+
+   this.configureApp();
+   this.handleRoutes();
+   this.handleSocketConnection();
  }
  
  private handleRoutes(): void {
    this.app.get("/", (req, res) => {
      res.send(`<h1>Hello World</h1>`); 
    });
+
+   this.app.get("/video", (req, res) => {
+    res.sendFile('index.html', { root: './public/' })
+  });
  }
+
+ private configureApp(): void {
+   this.app.use(express.static(__dirname + "/public"));
+}
  
  private handleSocketConnection(): void {
    this.io.on("connection", socket => {
