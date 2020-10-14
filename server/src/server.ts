@@ -3,6 +3,7 @@ import express = require('express')
 import { Server as SocketIOServer } from "socket.io";
 import socketIO = require('socket.io')
 import { createServer, Server as HTTPServer } from "http";
+import path = require('path');
  
 export class Server {
  private httpServer: HTTPServer;
@@ -26,8 +27,8 @@ export class Server {
  }
  
  private handleRoutes(): void {
-   this.app.get("/", (req, res) => {
-     res.send(`<h1>Hello World</h1>`); 
+   this.app.get("/helloworld", (req, res) => {
+     res.send(`Hello World :` + __dirname); 
    });
 
    this.app.get("/video", (req, res) => {
@@ -36,9 +37,9 @@ export class Server {
  }
 
  private configureApp(): void {
-   this.app.use(express.static(__dirname + "/public"));
+  this.app.use(express.static(path.join(__dirname, "../public")));
 }
- 
+
  private handleSocketConnection(): void {
    this.io.on("connection", socket => {
      console.log("Socket connected.");
