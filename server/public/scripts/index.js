@@ -128,15 +128,22 @@ peerConnection.ontrack = function({ streams: [stream] }) {
   }
 };
 
+// Navigator.getUserMedia()方法提醒用户需要使用音频（0或者1）和（0或者1）视频输入设备
 navigator.getUserMedia(
   { video: true, audio: true },
   stream => {
-    const localVideo = document.getElementById("local-video");
+    // 打開媒體設備並提供MediaStream ，我們可以將其分配給視頻或音頻元素以在本地播放流
+    const localVideo = document.getElementById("local-video2");
     if (localVideo) {
-      localVideo.srcObject = stream;
+       localVideo.srcObject = stream;
     }
 
-    stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+    // getTracks 返回包含所有 MediaStreamTrack 的陣列，不保證排序
+    stream.getTracks().forEach(track => 
+      // The MediaStream interface represents a stream of media content. 
+      // A stream consists of several tracks such as video or audio tracks.
+      peerConnection.addTrack(track, stream)
+    );
   },
   error => {
     console.warn(error.message);
