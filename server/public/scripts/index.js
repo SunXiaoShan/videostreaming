@@ -44,10 +44,12 @@ async function callUser(socketId) {
   const offer = await peerConnection.createOffer();
   await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
 
-  socket.emit("call-user", {
-    offer,
-    to: socketId
-  });
+  socket.emit(
+    "call-user", 
+    {
+      offer,
+      to: socketId
+    });
 }
 
 function updateUserList(socketIds) {
@@ -121,6 +123,8 @@ socket.on("call-rejected", data => {
   unselectUsersFromList();
 });
 
+
+
 peerConnection.ontrack = function({ streams: [stream] }) {
   const remoteVideo = document.getElementById("remote-video");
   if (remoteVideo) {
@@ -132,8 +136,8 @@ peerConnection.ontrack = function({ streams: [stream] }) {
 navigator.getUserMedia(
   { video: true, audio: true },
   stream => {
-    // 打開媒體設備並提供MediaStream ，我們可以將其分配給視頻或音頻元素以在本地播放流
-    const localVideo = document.getElementById("local-video2");
+    // 打開媒體設備並提供 MediaStream ，我們可以將其分配給視頻或音頻元素以在本地播放流
+    const localVideo = document.getElementById("local-video");
     if (localVideo) {
        localVideo.srcObject = stream;
     }
