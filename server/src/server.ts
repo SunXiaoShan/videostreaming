@@ -35,7 +35,27 @@ export class Server {
 
    this.app.get("/video", (req, res) => {
     res.sendFile('index.html', { root: './public/' })
-  });
+    });
+
+    this.app.get("/hello", (req, res) => {
+      res.sendFile('hello.html', { root: './public/' })
+    });
+
+    this.app.get("/send_show_hello_world_cmd", (req, res) => {
+      for (var i = 0; i < this.activeSockets.length; i++) {
+        var socketId = this.activeSockets[i];
+        let connecetedList = this.io.sockets.connected
+        let socket = connecetedList[socketId]
+
+
+        socket.emit(
+          'show_hello_world',
+          { 'socketId': socketId }
+        )
+      }
+
+      res.send("999");
+    });
  }
 
  private configureApp(): void {
@@ -44,20 +64,22 @@ export class Server {
 
  private handleSocketConnection(): void {
    this.io.on("connection", socket => {
-     console.log("Socket connected.");
+     console.log("Socket connected. " + socket.id);
 
      const existingSocket = this.activeSockets.find(
       existingSocket => existingSocket === socket.id
-    );
+     );
 
     if (!existingSocket) {
       this.activeSockets.push(socket.id);
 
-      socket.emit("update-user-list", {
-        users: this.activeSockets.filter(
-          existingSocket => existingSocket !== socket.id
-        )
-      });
+      socket.emit(
+        "update-user-list", 
+        {
+            users: this.activeSockets.filter(
+              existingSocket => existingSocket !== socket.id
+            )
+        });
 
       socket.broadcast.emit("update-user-list", {
         users: [socket.id]
